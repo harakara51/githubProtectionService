@@ -9,7 +9,8 @@ function createServer() {
         res.status(200).json({ name: 'Anup' });
       });
 	app.get("/github/user", githubController.getUserProfile);
-    app.post("/github/createRepo", githubController.createRepoWebook);
+    app.get("/github/createWebhook", githubController.createOrganizationWebook);
+    app.post("/github/webhookListenerForGithub", githubController.webHookListenerForOrg);
 	return app
 }
 

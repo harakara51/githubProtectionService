@@ -1,4 +1,7 @@
 const axios = require('axios')
+require('dotenv').config()
+const ngrok = require('ngrok');
+const githubAPIObject = require('./githubAPIobject')
 module.exports = class GithubService{
     static async getUserProfile(){
         try {
@@ -25,44 +28,8 @@ module.exports = class GithubService{
     static async changeRepoProtection(data){
         try {
             let repoName = data.repository.full_name;
-            let putData = {
-                owner: data.organization.login,
-                repo: data.repository.name,
-                branch: 'branch',
-                required_status_checks: {
-                  strict: true,
-                  contexts: [
-                    'contexts'
-                  ]
-                },
-                enforce_admins: true,
-                required_pull_request_reviews: {
-                  dismissal_restrictions: {
-                    users: [
-                      'users'
-                    ],
-                    teams: [
-                      'teams'
-                    ]
-                  },
-                  dismiss_stale_reviews: true,
-                  require_code_owner_reviews: true,
-                  required_approving_review_count: 2
-                },
-                restrictions: {
-                  users: [
-                    'users'
-                  ],
-                  teams: [
-                    'teams'
-                  ],
-                  apps: [
-                    'apps'
-                  ]
-                }
-            }
+            let putData = githubAPIObject.changeRepoProtectionObj(data);
             console.log("changing repo protection")
-            console.log(repoName)
             const url = `https://api.github.com/repos/${repoName}/branches/main/protection`
             let result = await this.putToGithubAPI(url, putData)
             return result;
@@ -75,21 +42,8 @@ module.exports = class GithubService{
     static async createGithubIssue (data){
         try {
             let repoName = data.repository.full_name;
-            let putData = {
-                owner: data.organization.login,
-                repo: data.repository.name,
-                title: 'Changed Master Branch protection',
-                labels: ['documentation'],
-                assignees: [data.sender.login],
-                body : `@${data.sender.login} following restriction has been made
-                enforce_admins: true
-                dismiss_stale_reviews: true,
-                require_code_owner_reviews: true,
-                required_approving_review_count: 2
-                    `
-                }
+            let putData = githubAPIObject.createIssueObj(obj);
             console.log("changing repo protection")
-            console.log(repoName)
             const url = `https://api.github.com/repos/${repoName}/issues`
             let result = await this.postToGithubAPI(url, putData)
             return result;
@@ -100,21 +54,16 @@ module.exports = class GithubService{
     }
     // reusable fuction to PUT to github API
     static async putToGithubAPI(url, data){
-        const headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.luke-cage-preview+json',
-            'Authorization': `token ${env.GITHUB_TOKEN}`
-          }
-          
         let result;
         try
-        {    
+        {   
+            console.log("making a PUT request to github API to make branch protection changes") 
             result = await axios.put(url, data, {
-                    headers: headers
+                    headers: githubAPIObject.HeaderPreview
                 });
            // console.log(result.status)
         }catch(error){
-            console.log(error)
+           // console.log(error)
             console.log(Object.keys(error), error.message);
             console.log("failed to make put request to github to update branch protection")
         }
@@ -123,19 +72,12 @@ module.exports = class GithubService{
 
     // reusable fuction to POST to github API
     static async postToGithubAPI(url, data){
-        const headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.luke-cage-preview+json',
-            'Authorization': `token ${env.GITHUB_TOKEN}`
-          }
-          
-        let result;
+      let result;
         try
         {    
             result = await axios.post(url, data, {
-                    headers: headers
+                    headers: headers.githubAPIObject.HeaderPreview
                 });
-            //console.log(result.status)
         }catch(error){
             console.log(error)
             console.log(Object.keys(error), error.message);
@@ -145,37 +87,21 @@ module.exports = class GithubService{
     }
      // function to create a github webhook
      static async createWebhook(){
-      const headers = {
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.luke-cage-preview+json',
-          'Authorization': `token ${env.GITHUB_TOKEN}`
-        }
-      let url = `https://api.github.com/repos/${env.GITHUB_ORGANIZATION}/${repo}/hooks`
-      let data = {
-        org: env.GITHUB_ORGANIZATION,
-        name: 'protectMasterBranch',
-        config: {
-          url: env.WEBSERVICE_URL,
-          content_type: 'json',
-          insecure_ssl: 'insecure_ssl',
-        },
-        events: [
-          "push",
-          "repositories"
-        ],
-        active: true,
-      }
+      let url = `https://api.github.com/orgs/${process.env.GITHUB_ORGANIZATION}/hooks`
+      // setup negrok locally
+      let  ngrokUrl = await ngrok.connect({addr: 4567});
+      ngrokUrl = ngrokUrl +'/github/webhookListenerForGithub';
+      console.log("ngrok url is set at: ", ngrokUrl);
       let result;
       try
       {    
-          result = await axios.post(url, data, {
-                  headers: headers
-              });
-          //console.log(result.status)
-      }catch(error){
-          console.log(error)
-          console.log(Object.keys(error), error.message);
-          console.log("failed to make put request to github to update branch protection")
+          result = await axios.post(url, githubAPIObject.createWebhookObj, {
+                  headers: githubAPIObject.Header
+            });
+      } catch(error){
+          console.log(error.response.data)
+         // console.log(Object.keys(error), error.message);
+          console.log("failed to make organization webhook")
       }
       return result;
   }   

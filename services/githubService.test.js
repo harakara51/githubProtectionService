@@ -1,11 +1,7 @@
 const githubService = require('./githubService')
 
 describe("Github Service", ()=> {
-    let data ={}
-    data.repository.name = 'cicada3';
-    data.sender.login ='harkara51'
-    data.data.repository.full_name ='sebastian52/cicada3'
-    data.organization.login = 'sebastian52'
+    
 
     it('test get user profile service', async () => {
         const response = await githubService.getUserProfile();
@@ -18,7 +14,7 @@ describe("Github Service", ()=> {
     
     it('test function that the webhook calls', async () => {
         
-       
+        let data ={repository:{name : 'cicada3' ,full_name :'sebastian52/cicada3'}, organization:{login:'sebastian52'}, sender:{login:"harakara51"} }
         const response = await githubService.createRepo(data);
         if(response) {
             expect(response).toEqual("got data");
@@ -27,7 +23,7 @@ describe("Github Service", ()=> {
         }
     })
     it('test change protection function of master branch', async () => {
-        const repoName = 'sebastian52/cicada3'
+        let data ={repository:{name : 'cicada3' ,full_name :'sebastian52/cicada3'}, organization:{login:'sebastian52'}, sender:{login:"harakara51"} }
         const response = await githubService.changeRepoProtection(repoName);
         if(response) {
             expect(response.status).toEqual(200);
@@ -36,7 +32,7 @@ describe("Github Service", ()=> {
         }
     })
     it('test issue creation', async () => {
-
+        let data ={repository:{name : 'cicada3' ,full_name :'sebastian52/cicada3'}, organization:{login:'sebastian52'}, sender:{login:"harakara51"} }
         const response = await githubService.createGithubIssue(data);
         if(response) {
             expect(response.status).toEqual(201);
@@ -46,6 +42,7 @@ describe("Github Service", ()=> {
     })
 
     it('test webhook creation', async () => {
+        let data ={repository:{name : 'cicada3' ,full_name :'sebastian52/cicada3'}, organization:{login:'sebastian52'}, sender:{login:"harakara51"} }
         const response = await githubService.createWebhook();
         if(response) {
             expect(response.status).toEqual(201);
