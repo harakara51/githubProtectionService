@@ -1,0 +1,29 @@
+{
+  "name": "githubprotectionservice",
+  "version": "1.0.0",
+  "description": "Github Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harakara51/githubProtectionService.git"
+  },
+  "author": "Anup Sebastian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/harakara51/githubProtectionService/issues"
+  },
+  "homepage": "https://github.com/harakara51/githubProtectionService#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.4",
+    "supertest": "^6.1.3"
+  }
+}
