@@ -34,7 +34,7 @@ You can verify if the webhook has been created, by going to organization setting
 In terminal, go to where this project is cloned
 
 To start web service, type: 
-<h4> npm test <4>
+<h4> npm test </h4>
 
 <b1> warning test, will recreate the webhook, update branch protection and create a new issue depending on the variable passed in <b1>
 
