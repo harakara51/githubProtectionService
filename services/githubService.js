@@ -95,12 +95,12 @@ module.exports = class GithubService{
       let result;
       try
       {    
-          result = await axios.post(url, githubAPIObject.createWebhookObj, {
+          result = await axios.post(url, githubAPIObject.createWebhookObj(ngrokUrl), {
                   headers: githubAPIObject.Header
             });
       } catch(error){
-          console.log(error.response.data)
-         // console.log(Object.keys(error), error.message);
+          console.log(error)
+          console.log(Object.keys(error), error.message);
           console.log("failed to make organization webhook")
       }
       return result;
