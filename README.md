@@ -21,15 +21,21 @@ To start web service, type in npm start you should see the line below:
     Example  app listening at http://localhost:4567
 
 <h1> Create web hook and point to web service </h1>
-You need to go to your github organization setting, click on webhook and point it to your webservice you started.
+You can either setup the webhook manually or use the web service
+To create it manually, you get further documention here
+
+To create the webhook using the webservice, on your browser or tool like postman, hit the following api:
+http://localhost:4567/github/createWebhook
+
+You can verify if the webhook has been created, by going to organization settings and clicking on webhooks
 
 <h1> Testing web service </h1>
 In terminal, go to where this project is cloned
 
 To start web service, type in npm test. You should 
 
-To start web service, type in npm start you should see the line below: 
-    Example  app listening at http://localhost:4567
+<b1> warning test, will recreate the webhook, update branch protection and create a new issue depending on the variable passed in <b1>
+
 
 
 
