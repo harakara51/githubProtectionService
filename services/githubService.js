@@ -13,7 +13,7 @@ module.exports = class GithubService{
         }
     }
 
-    //function to change protection of master branch on new repository
+    //main function that respond to webhook on repo creation
     static async createRepo(data){
         try {
             console.log("in create repo function, changing protection of master branch on new repository")
@@ -25,6 +25,7 @@ module.exports = class GithubService{
             console.log(error)
         }
     }
+    //function that changes master branch protection
     static async changeRepoProtection(data){
         try {
             let repoName = data.repository.full_name;
@@ -42,13 +43,13 @@ module.exports = class GithubService{
     static async createGithubIssue (data){
         try {
             let repoName = data.repository.full_name;
-            let putData = githubAPIObject.createIssueObj(obj);
+            let putData = githubAPIObject.createIssueObj(data);
             console.log("changing repo protection")
             const url = `https://api.github.com/repos/${repoName}/issues`
             let result = await this.postToGithubAPI(url, putData)
             return result;
         } catch (error) {
-            console.log(`Could not change branch protection`)
+            console.log(`Could not create issues `)
             console.log(error)
         }
     }
@@ -76,7 +77,7 @@ module.exports = class GithubService{
         try
         {    
             result = await axios.post(url, data, {
-                    headers: headers.githubAPIObject.HeaderPreview
+                    headers: githubAPIObject.HeaderPreview
                 });
         }catch(error){
             console.log(error)
@@ -85,7 +86,7 @@ module.exports = class GithubService{
         }
         return result;
     }
-     // function to create a github webhook
+     // function to create a github webhook on organization
      static async createWebhook(){
       let url = `https://api.github.com/orgs/${process.env.GITHUB_ORGANIZATION}/hooks`
       // setup negrok locally
